@@ -1,0 +1,430 @@
+openapi: 3.0.3
+info:
+  title: Swagger Social Network - OpenAPI 3.0
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+tags:
+  - name: users
+    description: Взаимодействие с пользователями
+  - name: posts
+    description: Взаимодействие с лентой
+  - name: dialog
+    description: Диалоги пользователей
+    
+paths:
+  /users/{friendId}/sendFriendRequest:
+    put:
+      tags:
+        - users
+      summary: Отправить запрос на добавление в друзья
+      operationId: sendFriendRequest
+      parameters:
+        - name: friendId
+          in: path
+          description: user Id to add friend
+          required: true
+          schema:
+            type: string
+            format: guid
+      responses:
+        '200':
+          description: Successful operation
+        '404':
+          description: FriendId not found
+  /users/{friendId}/acceptFriendRequest:
+    post:
+      tags:
+        - users
+      summary: Принять запрос на добавление в друзья
+      operationId: acceptFriendRequest
+      parameters:
+        - name: friendId
+          in: path
+          description: user Id to accept friend
+          required: true
+          schema:
+            type: string
+            format: guid
+      responses:
+        '200':
+          description: Successful operation
+        '404':
+          description: FriendId not found
+  /users/{userId}/getFriendRequests:
+    get:
+      tags:
+        - users
+      summary: Получить запросы на добавление в друзья
+      operationId: getFriendRequests
+      parameters:
+        - name: userId
+          in: path
+          description: user Id
+          required: true
+          schema:
+            type: string
+            format: guid
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserList'
+        '404':
+          description: UserId not found
+  /users/{userId}/friends:
+    get:
+      tags:
+        - users
+      summary: Получить друзей пользователя
+      operationId: getFriends
+      parameters:
+        - name: userId
+          in: path
+          description: user Id
+          required: true
+          schema:
+            type: string
+            format: guid
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserList'
+        '404':
+          description: UserId not found
+  /users/{userId}:
+    get:
+      tags:
+        - users
+      summary: Просмотр анкеты пользователя
+      operationId: getUserProfile
+      parameters:
+        - name: userId
+          in: path
+          description: user Id
+          required: true
+          schema:
+            type: string
+            format: guid
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '404':
+          description: UserId not found
+
+  /posts/{userId}/add:
+    put:
+      tags:
+        - posts
+      summary: Публикация поста в ленту
+      operationId: addPost
+      parameters:
+        - name: userId
+          in: path
+          description: user Id
+          required: true
+          schema:
+            type: string
+            format: guid
+      requestBody:
+        description: add post to user wall
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: guid
+                    example: 94559208-9195-41a3-b8cd-26f0696df800
+  /post/{postId}/loadFile:
+    post:
+      tags:
+        - posts
+      summary: Загрузка медиа файлов для постов
+      operationId: loadFile
+      parameters:
+        - name: postId
+          in: path
+          description: post id
+          required: true
+          schema:
+            type: string
+            format: guid
+        - in: formData
+          name: mediaFile
+          type: file
+          description: Media file
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+                example: http://swagger.io/image.jpeg
+
+  /posts/{userId}/get:
+    get:
+      tags:
+        - posts
+      summary: Получение постов пользователя
+      operationId: addPost
+      parameters:
+        - name: userId
+          in: path
+          description: user Id
+          required: true
+          schema:
+            type: string
+            format: guid
+      requestBody:
+        description: add post to user wall
+        content:
+          application/json:
+            schema:
+              type: array
+              items: 
+                $ref: '#/components/schemas/Post'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: guid
+                    example: 94559208-9195-41a3-b8cd-26f0696df800
+
+  /dialog/getDialogs:
+    get:
+      tags:
+        - dialog
+      summary: Получение диалогов пользователя
+      operationId: getDialog
+      parameters:
+        - name: userId
+          in: path
+          description: user Id
+          required: true
+          schema:
+            type: string
+            format: guid
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Dialog'
+
+  /dialog/{dialogId}/get:
+    get:
+      tags:
+        - dialog
+      summary: Сообщений диалога
+      operationId: getMessage
+      parameters:
+        - name: dialogId
+          in: path
+          description: dialog Id
+          required: true
+          schema:
+            type: string
+            format: guid
+        - name: lastMessageId
+          in: path
+          description: lastMessageId
+          schema:
+            type: string
+            format: guid
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Dialog'
+  /dialog/{dialogId}/send:
+    put:
+      tags:
+        - dialog
+      summary: Отправление сообщения
+      operationId: sendMessage
+      parameters:
+        - name: dialogId
+          in: path
+          description: user Id
+          required: true
+          schema:
+            type: string
+            format: guid
+      requestBody:
+        description: add message to dialog
+        content:
+          application/json:
+            schema:
+              type: array
+              items: 
+                $ref: '#/components/schemas/Message'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Dialog'
+                  
+components:
+  schemas:
+    FriendRequest:
+      required:
+        - friendId
+        - userId
+      type: object
+      properties:
+        friendId:
+          type: string
+          format: guid
+          example: 94559208-9195-41a3-b8cd-26f0696df894
+        userId:
+          type: string
+          format: guid
+          example: 94559208-9195-41a3-b8cd-26f0696df894
+    User: 
+      type: object
+      properties:
+        friendId:
+          type: string
+          format: guid
+          example: 94559208-9195-41a3-b8cd-26f0696df894
+        avatar:
+          type: string
+          example: http://swagger.io/image.jpeg
+        lastName: 
+          type: string
+          example: Ivanov
+        firstName:
+          type: string
+          example: Ivan
+    UserList:
+      type: array
+      items: 
+        $ref: '#/components/schemas/User'
+    UserProfile: 
+      type: object
+      properties:
+        userId:
+          type: string
+          format: guid
+          example: 94559208-9195-41a3-b8cd-26f0696df894
+        avatar:
+          type: string
+          example: http://swagger.io/image.jpeg
+        lastName: 
+          type: string
+          example: Ivanov
+        firstName:
+          type: string
+          example: Ivan
+        birthday:
+          type: string
+          example: 2000-01-01
+        city:
+          type: string
+          example: Ставрополь
+        photoPreview:
+          type: array
+          items:
+            type: string
+            example: http://swagger.io/photo.jpeg
+    
+    Post: 
+      type: object
+      properties:
+        userId:
+          type: string
+          format: guid
+          example: 94559208-9195-41a3-b8cd-26f0696df894
+        postId:
+          type: string
+          format: guid
+          example: 94559208-9195-41a3-b8cd-26f0696df801
+        text:
+          type: string
+        mediaFiles:
+          type: array
+          items:
+            type: object
+            properties: 
+              mediaType: 
+                type: string
+                example: photo
+              url: 
+                type: string
+                example: http://swagger.io/photo.jpeg
+
+    Dialog:
+      type: object
+      properties:
+        dialogId:
+          type: string
+          format: guid
+          example: 94559208-9195-41a3-b8cd-26f0696df895
+        User:
+          $ref: '#/components/schemas/User'
+        LastMessage:
+           $ref: '#/components/schemas/Message'
+        
+    Message: 
+      type: object
+      properties:
+        userId:
+          type: string
+          format: guid
+          example: 94559208-9195-41a3-b8cd-26f0696df894
+        dialogId:
+          type: string
+          format: guid
+          example: 94559208-9195-41a3-b8cd-26f0696df895
+        avatar:
+          type: string
+          format: url
+          example: http://swagger.io/avatar.jpeg
+        text:
+          type: string
