@@ -39,6 +39,10 @@ paths:
           description: Successful operation
         '404':
           description: FriendId not found
+      security:
+        - social_network_auth:
+            - write:users
+            - read:users
   /users/{friendId}/acceptFriendRequest:
     post:
       tags:
@@ -58,6 +62,10 @@ paths:
           description: Successful operation
         '404':
           description: FriendId not found
+      security:
+        - social_network_auth:
+            - write:users
+            - read:users
   /users/{userId}/getFriendRequests:
     get:
       tags:
@@ -81,6 +89,10 @@ paths:
                 $ref: '#/components/schemas/UserList'
         '404':
           description: UserId not found
+      security:
+        - social_network_auth:
+            - write:users
+            - read:users
   /users/{userId}/friends:
     get:
       tags:
@@ -104,6 +116,10 @@ paths:
                 $ref: '#/components/schemas/UserList'
         '404':
           description: UserId not found
+      security:
+        - social_network_auth:
+            - write:users
+            - read:users
   /users/{userId}:
     get:
       tags:
@@ -127,7 +143,10 @@ paths:
                 $ref: '#/components/schemas/UserProfile'
         '404':
           description: UserId not found
-
+      security:
+        - social_network_auth:
+            - write:users
+            - read:users
   /posts/{userId}/add:
     put:
       tags:
@@ -161,6 +180,10 @@ paths:
                     type: string
                     format: guid
                     example: 94559208-9195-41a3-b8cd-26f0696df800
+      security:
+        - social_network_auth:
+            - write:posts
+            - read:posts
   /post/{postId}/loadFile:
     post:
       tags:
@@ -183,6 +206,10 @@ paths:
               schema:
                 type: string
                 example: http://swagger.io/image.jpeg
+      security:
+        - social_network_auth:
+            - write:posts
+            - read:posts
 
   /posts/{userId}/get:
     get:
@@ -210,6 +237,11 @@ paths:
                     type: string
                     format: guid
                     example: 94559208-9195-41a3-b8cd-26f0696df800
+                    
+      security:
+        - social_network_auth:
+            - write:posts
+            - read:posts
 
   /dialog/getDialogs:
     get:
@@ -234,6 +266,10 @@ paths:
                 type: array
                 items: 
                   $ref: '#/components/schemas/Dialog'
+      security:
+          - social_network_auth:
+              - write:dialog
+              - read:dialog
 
   /dialog/{dialogId}/get:
     get:
@@ -265,6 +301,10 @@ paths:
                 type: array
                 items: 
                   $ref: '#/components/schemas/Dialog'
+      security:
+          - social_network_auth:
+              - write:dialog
+              - read:dialog
   /dialog/{dialogId}/send:
     put:
       tags:
@@ -297,6 +337,10 @@ paths:
                 type: array
                 items: 
                   $ref: '#/components/schemas/Dialog'
+      security:
+          - social_network_auth:
+              - write:dialog
+              - read:dialog
                   
 components:
   schemas:
