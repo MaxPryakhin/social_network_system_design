@@ -175,10 +175,6 @@ paths:
           schema:
             type: string
             format: guid
-        - in: formData
-          name: mediaFile
-          type: file
-          description: Media file
       responses:
         '200':
           description: Successful operation
@@ -193,7 +189,7 @@ paths:
       tags:
         - posts
       summary: Получение постов пользователя
-      operationId: addPost
+      operationId: getPost
       parameters:
         - name: userId
           in: path
@@ -202,15 +198,6 @@ paths:
           schema:
             type: string
             format: guid
-      requestBody:
-        description: add post to user wall
-        content:
-          application/json:
-            schema:
-              type: array
-              items: 
-                $ref: '#/components/schemas/Post'
-        required: true
       responses:
         '200':
           description: Successful operation
@@ -232,7 +219,7 @@ paths:
       operationId: getDialog
       parameters:
         - name: userId
-          in: path
+          in: query
           description: user Id
           required: true
           schema:
@@ -263,8 +250,9 @@ paths:
             type: string
             format: guid
         - name: lastMessageId
-          in: path
+          in: query
           description: lastMessageId
+          required: true
           schema:
             type: string
             format: guid
@@ -428,3 +416,17 @@ components:
           example: http://swagger.io/avatar.jpeg
         text:
           type: string
+
+  securitySchemes:
+    social_network_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: https://swagger.io/oauth/authorize
+          scopes:
+            write:users: modify user data
+            read:users: read user data
+            write:posts: modify posts data
+            read:posts: read posts data
+            write:dialog: modify dialog data
+            read:dialog: read dialog data
